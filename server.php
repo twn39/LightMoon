@@ -22,7 +22,7 @@ $app = new LightMoon\App([
         'worker_num' => 4,
     ]
 ]);
-$app->get('GET', '/', 'UserController:show');
+$app->get('/', 'UserController:show');
 
 $app->run();
 
