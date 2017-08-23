@@ -10,18 +10,15 @@ class UserController
         $this->container = $container;
     }
 
-    public function show(\RingCentral\Psr7\Request $request, \React\Http\Response $response)
+    public function show($request, $response)
     {
-        $response->withHeader('Content-type', 'text/plain');
-        $response->getBody()->write("hello react php");
-
-        return $response;
+        return $response->end("hello swoole");
     }
 }
 $app = new LightMoon\App([
     'listen' => '8080',
 ]);
-$app->get('GET', '/user/{id}', 'UserController:show');
+$app->get('GET', '/', 'UserController:show');
 
 $app->run();
 

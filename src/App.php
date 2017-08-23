@@ -7,10 +7,6 @@ use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
 use Pimple\Container;
-use Psr\Http\Message\ServerRequestInterface;
-use React\EventLoop\Factory;
-use React\Http\Response;
-use React\Socket\Server;
 
 class App
 {
@@ -59,23 +55,19 @@ class App
             return new GroupCountBased($c['router.collector']->getData());
         };
 
-        $this->httpServerLoop = Factory::create();
-        $this->socket = new Server($this->port, $this->httpServerLoop);
+        $this->httpServer = new \swoole_http_server("127.0.0.1", $this->port);
 
-        $this->httpServer = new \React\Http\Server(function (ServerRequestInterface $request) {
+        $this->httpServer->on('request', function ($request, $response) {
+            $httpMethod = $request->server['request_method'];
+            $uri = $request->server['request_uri'];
 
-            $httpMethod = $request->getMethod();
-            $uri = $request->getUri();
-
-            $routeInfo = $this->container['router.dispatch']->dispatch($httpMethod, $uri->getPath());
+            $routeInfo = $this->container['router.dispatch']->dispatch($httpMethod, $uri);
 
             if ($routeInfo[0] === Dispatcher::FOUND) {
 
-                $response = new Response();
                 if(is_callable($routeInfo[1])) {
-                    $res = call_user_func_array($routeInfo[1], [$request, $response]);
+                    return call_user_func_array($routeInfo[1], [$request, $response]);
 
-                    return $res;
                 } else {
 
                     list($class, $method) = explode(':', $routeInfo[1]);
@@ -86,13 +78,18 @@ class App
                 }
 
             } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
+                $response->status(405);
+                $request->end('Method Not Allowed');
+                return $response;
 
-                return new Response(405, array('Content-Type' => 'text/plain'), 'Method Not Allowed');
             } elseif ($routeInfo[0] === Dispatcher::NOT_FOUND) {
-                return new Response(404, ['Content-Type' => 'text/plain'], 'Not Found');
+                $response->status(404);
+                $response->end('Not Found');
+                return $response;
             }
 
         });
+
     }
 
     public function get($method, $uri, $handler) {
@@ -105,11 +102,9 @@ class App
 
     public function run()
     {
-        $this->httpServer->listen($this->socket);
-
         echo "Server running at http://127.0.0.1:{$this->port}\n";
 
-        $this->httpServerLoop->run();
+        $this->httpServer->start();
     }
 
 }
