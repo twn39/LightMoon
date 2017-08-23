@@ -10,14 +10,17 @@ class UserController
         $this->container = $container;
     }
 
-    public function show($request, $response)
+    public function show($request, $response, $args)
     {
-        return $response->end("hello swoole");
+        $response->end("hello swoole");
     }
 }
 $app = new LightMoon\App([
     'host' => '127.0.0.1',
     'listen' => '8080',
+    'server' => [
+        'worker_num' => 4,
+    ]
 ]);
 $app->get('GET', '/', 'UserController:show');
 

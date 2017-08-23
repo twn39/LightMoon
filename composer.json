@@ -3,7 +3,9 @@
         "react/event-loop": "^0.4.3",
         "react/http": "^0.7.4",
         "pimple/pimple": "^3.2",
-        "nikic/fast-route": "^1.2"
+        "nikic/fast-route": "^1.2",
+        "illuminate/database": "^5.4",
+        "illuminate/events": "^5.4"
     },
     "require-dev": {
         "symfony/var-dumper": "^3.3"

@@ -49,6 +49,7 @@ class App
         };
 
         $this->httpServer = new \swoole_http_server($this->host, $this->port);
+        $this->httpServer->set($this->container['setting']['server']);
 
         $this->httpServer->on('request', function ($request, $response) {
             $httpMethod = $request->server['request_method'];
@@ -59,7 +60,7 @@ class App
             if ($routeInfo[0] === Dispatcher::FOUND) {
 
                 if(is_callable($routeInfo[1])) {
-                    return call_user_func_array($routeInfo[1], [$request, $response]);
+                    return call_user_func_array($routeInfo[1], [$request, $response, $routeInfo[2]]);
 
                 } else {
 
@@ -67,7 +68,7 @@ class App
 
                     $controller = new $class($this->container);
 
-                    return $controller->$method($request, $response);
+                    return $controller->$method($request, $response, $routeInfo[2]);
                 }
 
             } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
@@ -85,12 +86,33 @@ class App
 
     }
 
-    public function get($method, $uri, $handler) {
+    public function get($uri, $handler) {
+        $this->container['router.collector']->addRoute('GET', $uri, $handler);
+    }
+
+    public function post($uri, $handler) {
+        $this->container['router.collector']->addRoute('POST', $uri, $handler);
+    }
+    public function put($uri, $handler) {
+        $this->container['router.collector']->addRoute('PUT', $uri, $handler);
+    }
+    public function delete($uri, $handler) {
+        $this->container['router.collector']->addRoute('DELETE', $uri, $handler);
+    }
+
+    public function patch($uri, $handler) {
+        $this->container['router.collector']->addRoute('PATCH', $uri, $handler);
+    }
+    public function head($uri, $handler) {
+        $this->container['router.collector']->addRoute('HEAD', $uri, $handler);
+    }
+
+    public function addRoute($method, $uri, $handler) {
         $this->container['router.collector']->addRoute($method, $uri, $handler);
     }
 
-    public function post($method, $uri, $handler) {
-        $this->container['router.collector']->addRoute($method, $uri, $handler);
+    public function group($prefix, $callback) {
+        $this->container['router.collector']->addGroup($prefix, $callback);
     }
 
     public function run()
