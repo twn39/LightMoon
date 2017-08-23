@@ -17,21 +17,13 @@ class App
     private $container;
 
     /**
-     * @var \React\EventLoop\ExtEventLoop|\React\EventLoop\LibEventLoop|\React\EventLoop\LibEvLoop|\React\EventLoop\StreamSelectLoop
-     */
-    private $httpServerLoop;
-
-    /**
-     * @var Server
-     */
-    private $socket;
-
-    /**
      * @var \React\Http\Server
      */
     private $httpServer;
 
     private $port;
+
+    private $host;
 
     /**
      * App constructor.
@@ -43,6 +35,7 @@ class App
         $this->container['setting'] = $setting;
 
         $this->port = $this->container['setting']['listen'];
+        $this->host = $this->container['setting']['host'];
 
         $this->container['router.collector'] = function () {
             /** @var RouteCollector $routeCollector */
@@ -55,7 +48,7 @@ class App
             return new GroupCountBased($c['router.collector']->getData());
         };
 
-        $this->httpServer = new \swoole_http_server("127.0.0.1", $this->port);
+        $this->httpServer = new \swoole_http_server($this->host, $this->port);
 
         $this->httpServer->on('request', function ($request, $response) {
             $httpMethod = $request->server['request_method'];
@@ -102,7 +95,7 @@ class App
 
     public function run()
     {
-        echo "Server running at http://127.0.0.1:{$this->port}\n";
+        echo "Server running at http://{$this->host}:{$this->port}\n";
 
         $this->httpServer->start();
     }

@@ -16,6 +16,7 @@ class UserController
     }
 }
 $app = new LightMoon\App([
+    'host' => '127.0.0.1',
     'listen' => '8080',
 ]);
 $app->get('GET', '/', 'UserController:show');
