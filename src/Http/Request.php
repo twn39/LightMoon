@@ -2,6 +2,7 @@
 
 namespace LightMoon\Http;
 
+use function GuzzleHttp\Psr7\stream_for;
 use GuzzleHttp\Psr7\UploadedFile;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
@@ -150,10 +151,10 @@ class Request extends \GuzzleHttp\Psr7\Request
         $method = $request->server['request_method'];
         $headers = $request->header;
         $uri = $request->server['request_uri'];
-        $body = $request->rawContent();
+        $body = stream_for($request->rawContent());
         $protocol = '1.1';
 
-        $serverRequest = new Request($method, $uri, $headers, $body, $protocol);
+        $serverRequest = new static($method, $uri, $headers, $body, $protocol);
 
         return $serverRequest
             ->withCookieParams($request->cookie)
