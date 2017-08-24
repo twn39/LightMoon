@@ -74,7 +74,7 @@ class App
                     if (is_callable($middleware)) {
                         $response = call_user_func_array($middleware, [$request, $response, $controller->$method]);
                     } else {
-                        $response = call_user_func_array($controller->$method, [$request, $response]);
+                        $response = call_user_func_array([$controller, $method], [$request, $response]);
                     }
 
                     return $response;
