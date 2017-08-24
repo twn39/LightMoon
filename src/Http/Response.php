@@ -2,6 +2,7 @@
 namespace LightMoon\Http;
 
 use GuzzleHttp\Psr7\MessageTrait;
+use function GuzzleHttp\Psr7\stream_for;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 

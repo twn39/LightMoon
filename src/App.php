@@ -37,7 +37,8 @@ class App
         $this->container['router.collector'] = function () {
             /** @var RouteCollector $routeCollector */
             return new RouteCollector(
-                new Std(), new \FastRoute\DataGenerator\GroupCountBased()
+                new Std(),
+                new \FastRoute\DataGenerator\GroupCountBased()
             );
         };
 
@@ -55,32 +56,39 @@ class App
             $routeInfo = $this->container['router.dispatch']->dispatch($httpMethod, $uri);
 
             if ($routeInfo[0] === Dispatcher::FOUND) {
-
-                if(is_callable($routeInfo[1])) {
-                    return call_user_func_array($routeInfo[1], [$request, $response, $routeInfo[2]]);
-
+                if (is_callable($routeInfo[1]['uses'])) {
+                    $middleware = $routeInfo[1]['middleware'];
+                    $callback = $routeInfo[1]['uses'];
+                    if (is_callable($middleware)) {
+                        $response = call_user_func_array($middleware, [$request, $response, $callback]);
+                    } else {
+                        $response = call_user_func_array($callback, [$request, $response]);
+                    }
+                    return $response;
                 } else {
-
-                    list($class, $method) = explode(':', $routeInfo[1]);
+                    list($class, $method) = explode(':', $routeInfo[1]['uses']);
 
                     $controller = new $class($this->container);
 
-                    return $controller->$method($request, $response, $routeInfo[2]);
-                }
+                    $middleware = $routeInfo[1]['middleware'];
+                    if (is_callable($middleware)) {
+                        $response = call_user_func_array($middleware, [$request, $response, $controller->$method]);
+                    } else {
+                        $response = call_user_func_array($controller->$method, [$request, $response]);
+                    }
 
+                    return $response;
+                }
             } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
                 $response->status(405);
                 $request->end('Method Not Allowed');
                 return $response;
-
             } elseif ($routeInfo[0] === Dispatcher::NOT_FOUND) {
                 $response->status(404);
                 $response->end('Not Found');
                 return $response;
             }
-
         });
-
     }
 
     /**
@@ -88,15 +96,20 @@ class App
      * @param $handler
      * @param array $middleware
      */
-    public function get($uri, $handler, $middleware = []) {
-        $this->container['router.collector']->addRoute('GET', $uri, $handler);
+    public function get($uri, $handler, $middleware = null)
+    {
+        $this->container['router.collector']->addRoute('GET', $uri, [
+            'uses' => $handler,
+            'middleware' => $middleware,
+        ]);
     }
 
     /**
      * @param $uri
      * @param $handler
      */
-    public function post($uri, $handler) {
+    public function post($uri, $handler)
+    {
         $this->container['router.collector']->addRoute('POST', $uri, $handler);
     }
 
@@ -104,7 +117,8 @@ class App
      * @param $uri
      * @param $handler
      */
-    public function put($uri, $handler) {
+    public function put($uri, $handler)
+    {
         $this->container['router.collector']->addRoute('PUT', $uri, $handler);
     }
 
@@ -112,7 +126,8 @@ class App
      * @param $uri
      * @param $handler
      */
-    public function delete($uri, $handler) {
+    public function delete($uri, $handler)
+    {
         $this->container['router.collector']->addRoute('DELETE', $uri, $handler);
     }
 
@@ -120,7 +135,8 @@ class App
      * @param $uri
      * @param $handler
      */
-    public function patch($uri, $handler) {
+    public function patch($uri, $handler)
+    {
         $this->container['router.collector']->addRoute('PATCH', $uri, $handler);
     }
 
@@ -128,7 +144,8 @@ class App
      * @param $uri
      * @param $handler
      */
-    public function head($uri, $handler) {
+    public function head($uri, $handler)
+    {
         $this->container['router.collector']->addRoute('HEAD', $uri, $handler);
     }
 
@@ -146,7 +163,8 @@ class App
      * @param $uri
      * @param $handler
      */
-    public function addRoute($method, $uri, $handler) {
+    public function addRoute($method, $uri, $handler)
+    {
         $this->container['router.collector']->addRoute($method, $uri, $handler);
     }
 
@@ -154,14 +172,16 @@ class App
      * @param $prefix
      * @param $callback
      */
-    public function group($prefix, $callback) {
+    public function group($prefix, $callback)
+    {
         $this->container['router.collector']->addGroup($prefix, $callback);
     }
 
     /**
      * @param $provider
      */
-    public function register($provider) {
+    public function register($provider)
+    {
         $this->container->register($provider);
     }
 
@@ -171,5 +191,4 @@ class App
 
         $this->httpServer->start();
     }
-
 }

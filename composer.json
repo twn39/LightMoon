@@ -5,7 +5,8 @@
         "guzzlehttp/psr7": "^1.4"
     },
     "require-dev": {
-        "symfony/var-dumper": "^3.3"
+        "symfony/var-dumper": "^3.3",
+        "friendsofphp/php-cs-fixer": "^2.5"
     },
     "autoload": {
         "psr-4": {

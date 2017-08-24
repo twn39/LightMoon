@@ -64,7 +64,6 @@ class Request extends \GuzzleHttp\Psr7\Request
         $body = null,
         $version = '1.1'
     ) {
-
         parent::__construct($method, $uri, $headers, $body, $version);
     }
 
@@ -161,7 +160,6 @@ class Request extends \GuzzleHttp\Psr7\Request
             ->withQueryParams($request->get)
             ->withParsedBody($request->post)
             ->withUploadedFiles(self::normalizeFiles($request->files));
-
     }
 
     /**
@@ -169,7 +167,8 @@ class Request extends \GuzzleHttp\Psr7\Request
      *
      * @return UriInterface
      */
-    public static function getUriFromGlobals() {
+    public static function getUriFromGlobals()
+    {
 //        $uri = new Uri('');
 //
 //        $uri = $uri->withScheme(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
