@@ -86,8 +86,9 @@ class App
     /**
      * @param $uri
      * @param $handler
+     * @param array $middleware
      */
-    public function get($uri, $handler) {
+    public function get($uri, $handler, $middleware = []) {
         $this->container['router.collector']->addRoute('GET', $uri, $handler);
     }
 
