@@ -2,11 +2,11 @@
 
 namespace LightMoon;
 
+use Pimple\Container;
 use FastRoute\Dispatcher;
-use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
-use Pimple\Container;
+use FastRoute\Dispatcher\GroupCountBased;
 
 class App
 {
@@ -16,9 +16,6 @@ class App
      */
     private $container;
 
-    /**
-     * @var \React\Http\Server
-     */
     private $httpServer;
 
     private $port;
@@ -86,33 +83,85 @@ class App
 
     }
 
+    /**
+     * @param $uri
+     * @param $handler
+     */
     public function get($uri, $handler) {
         $this->container['router.collector']->addRoute('GET', $uri, $handler);
     }
 
+    /**
+     * @param $uri
+     * @param $handler
+     */
     public function post($uri, $handler) {
         $this->container['router.collector']->addRoute('POST', $uri, $handler);
     }
+
+    /**
+     * @param $uri
+     * @param $handler
+     */
     public function put($uri, $handler) {
         $this->container['router.collector']->addRoute('PUT', $uri, $handler);
     }
+
+    /**
+     * @param $uri
+     * @param $handler
+     */
     public function delete($uri, $handler) {
         $this->container['router.collector']->addRoute('DELETE', $uri, $handler);
     }
 
+    /**
+     * @param $uri
+     * @param $handler
+     */
     public function patch($uri, $handler) {
         $this->container['router.collector']->addRoute('PATCH', $uri, $handler);
     }
+
+    /**
+     * @param $uri
+     * @param $handler
+     */
     public function head($uri, $handler) {
         $this->container['router.collector']->addRoute('HEAD', $uri, $handler);
     }
 
+    /**
+     * @param $uri
+     * @param $handler
+     */
+    public function options($uri, $handler)
+    {
+        $this->container['router.collector']->addRoute('OPTIONS', $uri, $handler);
+    }
+
+    /**
+     * @param $method
+     * @param $uri
+     * @param $handler
+     */
     public function addRoute($method, $uri, $handler) {
         $this->container['router.collector']->addRoute($method, $uri, $handler);
     }
 
+    /**
+     * @param $prefix
+     * @param $callback
+     */
     public function group($prefix, $callback) {
         $this->container['router.collector']->addGroup($prefix, $callback);
+    }
+
+    /**
+     * @param $provider
+     */
+    public function register($provider) {
+        $this->container->register($provider);
     }
 
     public function run()
