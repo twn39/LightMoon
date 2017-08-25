@@ -7,6 +7,7 @@ use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
 use FastRoute\Dispatcher\GroupCountBased;
+use InvalidArgumentException;
 
 class App
 {
@@ -48,58 +49,56 @@ class App
 
         $this->httpServer = new \swoole_http_server($this->host, $this->port);
         $this->httpServer->set($this->container['setting']['server']);
+        $this->httpServer->on('request', [$this, 'onRequest']);
+    }
 
-        $this->httpServer->on('request', function ($request, $response) {
-            $httpMethod = $request->server['request_method'];
-            $uri = $request->server['request_uri'];
+    /**
+     * @param $request
+     * @param $response
+     * @return mixed
+     */
+    public function onRequest($request, $response)
+    {
+        $httpMethod = $request->server['request_method'];
+        $uri = $request->server['request_uri'];
 
-            $routeInfo = $this->container['router.dispatch']->dispatch($httpMethod, $uri);
+        $routeInfo = $this->container['router.dispatch']->dispatch($httpMethod, $uri);
 
-            if ($routeInfo[0] === Dispatcher::FOUND) {
-                if (is_callable($routeInfo[1]['uses'])) {
-                    $middleware = $routeInfo[1]['middleware'];
-                    $callback = $routeInfo[1]['uses'];
-                    if (is_callable($middleware)) {
-                        $response = call_user_func_array($middleware, [$request, $response, $callback]);
-                    } else {
-                        $response = call_user_func_array($callback, [$request, $response]);
-                    }
-                    return $response;
+        if ($routeInfo[0] === Dispatcher::FOUND) {
+
+            $handler = $routeInfo[1]['uses'];
+            $middleware = $routeInfo[1]['middleware'];
+
+            if ($handler instanceof Handler) {
+                if (is_callable($middleware)) {
+                    call_user_func_array($middleware, [$request, $response, $handler]);
                 } else {
-                    list($class, $method) = explode(':', $routeInfo[1]['uses']);
-
-                    $controller = new $class($this->container);
-
-                    $middleware = $routeInfo[1]['middleware'];
-                    if (is_callable($middleware)) {
-                        $response = call_user_func_array($middleware, [$request, $response, $controller->$method]);
-                    } else {
-                        $response = call_user_func_array([$controller, $method], [$request, $response]);
-                    }
-
-                    return $response;
+                    call_user_func_array($handler, [$request, $response]);
                 }
-            } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
-                $response->status(405);
-                $request->end('Method Not Allowed');
-                return $response;
-            } elseif ($routeInfo[0] === Dispatcher::NOT_FOUND) {
-                $response->status(404);
-                $response->end('Not Found');
-                return $response;
+            } else {
+                throw new InvalidArgumentException('handler is invalid');
             }
-        });
+
+        } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
+            $response->status(405);
+            $request->end('Method Not Allowed');
+            return $response;
+        } elseif ($routeInfo[0] === Dispatcher::NOT_FOUND) {
+            $response->status(404);
+            $response->end('Not Found');
+            return $response;
+        }
     }
 
     /**
      * @param $uri
-     * @param $handler
+     * @param $callback
      * @param array $middleware
      */
-    public function get($uri, $handler, $middleware = null)
+    public function get($uri, $callback, $middleware = null)
     {
         $this->container['router.collector']->addRoute('GET', $uri, [
-            'uses' => $handler,
+            'uses' => new Handler($this->container, $callback),
             'middleware' => $middleware,
         ]);
     }
