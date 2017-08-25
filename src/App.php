@@ -23,6 +23,8 @@ class App
 
     private $host;
 
+    private $events = [];
+
     /**
      * App constructor.
      * @param array $setting
@@ -184,8 +186,18 @@ class App
         $this->container->register($provider);
     }
 
+    public function on($event, $callback)
+    {
+        $this->events[] = [$event => $callback];
+    }
+
     public function run()
     {
+        if (!empty($this->events)) {
+            foreach ($this->events as $event => $callback) {
+                $this->httpServer->on($event, $callback);
+            }
+        }
         echo "Server running at http://{$this->host}:{$this->port}\n";
 
         $this->httpServer->start();
