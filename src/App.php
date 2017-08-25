@@ -52,6 +52,12 @@ class App
         $this->httpServer = new \swoole_http_server($this->host, $this->port);
         $this->httpServer->set($this->container['setting']['server']);
         $this->httpServer->on('request', [$this, 'onRequest']);
+        $this->events['start'] = [$this, 'onStart'];
+    }
+
+    public function onStart($server)
+    {
+        echo "server start...";
     }
 
     /**
@@ -214,7 +220,7 @@ class App
 
     public function on($event, $callback)
     {
-        $this->events[] = [$event => $callback];
+        $this->events[$event] = $callback;
     }
 
     public function run()
@@ -224,7 +230,6 @@ class App
                 $this->httpServer->on($event, $callback);
             }
         }
-        echo "Server running at http://{$this->host}:{$this->port}\n";
 
         $this->httpServer->start();
     }
