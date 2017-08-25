@@ -3,8 +3,6 @@
 namespace LightMoon;
 
 use Pimple\Container;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class Handler
 {
@@ -29,7 +27,7 @@ class Handler
         }
     }
 
-    public function __invoke(RequestInterface $request, ResponseInterface $response)
+    public function __invoke($request, $response)
     {
         $callback = $this->resolveCallBack($this->callback);
 

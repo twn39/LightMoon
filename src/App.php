@@ -73,9 +73,14 @@ class App
 
             if ($handler instanceof Handler) {
                 if (is_callable($middleware)) {
-                    call_user_func_array($middleware, [$request, $response, $handler]);
+                    $response = call_user_func_array($middleware, [$request, $response, $handler]);
+                    $response->end();
+                    return $response;
                 } else {
-                    call_user_func_array($handler, [$request, $response]);
+
+                    $response = call_user_func_array($handler, [$request, $response]);
+                    $response->end();
+                    return $response;
                 }
             } else {
                 throw new InvalidArgumentException('handler is invalid');
@@ -107,66 +112,87 @@ class App
 
     /**
      * @param $uri
-     * @param $handler
+     * @param $callback
+     * @param null $middleware
+     * @internal param $handler
      */
-    public function post($uri, $handler)
+    public function post($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('POST', $uri, $handler);
+        $this->container['router.collector']->addRoute('POST', $uri, [
+            'uses' => new Handler($this->container, $callback),
+            'middleware' => $middleware,
+        ]);
     }
 
     /**
      * @param $uri
-     * @param $handler
+     * @param $callback
+     * @param null $middleware
+     * @internal param $handler
      */
-    public function put($uri, $handler)
+    public function put($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('PUT', $uri, $handler);
+        $this->container['router.collector']->addRoute('PUT', $uri, [
+            'uses' => new Handler($this->container, $callback),
+            'middleware' => $middleware,
+        ]);
     }
 
     /**
      * @param $uri
-     * @param $handler
+     * @param $callback
+     * @param null $middleware
+     * @internal param $handler
      */
-    public function delete($uri, $handler)
+    public function delete($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('DELETE', $uri, $handler);
+        $this->container['router.collector']->addRoute('DELETE', $uri, [
+            'uses' => new Handler($this->container, $callback),
+            'middleware' => $middleware,
+        ]);
     }
 
     /**
      * @param $uri
-     * @param $handler
+     * @param $callback
+     * @param null $middleware
+     * @internal param $handler
      */
-    public function patch($uri, $handler)
+    public function patch($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('PATCH', $uri, $handler);
+        $this->container['router.collector']->addRoute('PATCH', $uri, [
+            'uses' => new Handler($this->container, $callback),
+            'middleware' => $middleware,
+        ]);
     }
 
     /**
      * @param $uri
-     * @param $handler
+     * @param $callback
+     * @param null $middleware
+     * @internal param $handler
      */
-    public function head($uri, $handler)
+    public function head($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('HEAD', $uri, $handler);
-    }
-
-    /**
-     * @param $uri
-     * @param $handler
-     */
-    public function options($uri, $handler)
-    {
-        $this->container['router.collector']->addRoute('OPTIONS', $uri, $handler);
+        $this->container['router.collector']->addRoute('HEAD', $uri, [
+            'uses' => new Handler($this->container, $callback),
+            'middleware' => $middleware,
+        ]);
     }
 
     /**
      * @param $method
      * @param $uri
-     * @param $handler
+     * @param $callback
+     * @param null $middleware
+     * @internal param $handler
      */
-    public function addRoute($method, $uri, $handler)
+    public function addRoute($method, $uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute($method, $uri, $handler);
+        $this->container['router.collector']->addRoute($method, $uri, [
+            'uses' => new Handler($this->container, $callback),
+            'middleware' => $middleware,
+        ]);
     }
 
     /**
