@@ -17,12 +17,24 @@ class App
      */
     private $container;
 
+    /**
+     * @var \swoole_http_server
+     */
     private $httpServer;
 
+    /**
+     * @var string port
+     */
     private $port;
 
+    /**
+     * @var string host
+     */
     private $host;
 
+    /**
+     * @var array events
+     */
     private $events = [];
 
     /**
@@ -51,13 +63,16 @@ class App
 
         $this->httpServer = new \swoole_http_server($this->host, $this->port);
         $this->httpServer->set($this->container['setting']['server']);
-        $this->httpServer->on('request', [$this, 'onRequest']);
+        $this->events['request'] = [$this, 'onRequest'];
         $this->events['start'] = [$this, 'onStart'];
     }
 
-    public function onStart($server)
+    /**
+     * @param \swoole_http_server $server
+     */
+    public function onStart(\swoole_http_server $server)
     {
-        echo "server start...";
+        echo "Server start at {$server->host}:{$server->port}....";
     }
 
     /**
@@ -218,17 +233,22 @@ class App
         $this->container->register($provider);
     }
 
-    public function on($event, $callback)
+    /**
+     * @param $event
+     * @param $callback
+     */
+    public function on($event, \Closure $callback)
     {
         $this->events[$event] = $callback;
     }
 
+    /**
+     * main run
+     */
     public function run()
     {
-        if (!empty($this->events)) {
-            foreach ($this->events as $event => $callback) {
-                $this->httpServer->on($event, $callback);
-            }
+        foreach ($this->events as $event => $callback) {
+            $this->httpServer->on($event, $callback);
         }
 
         $this->httpServer->start();
