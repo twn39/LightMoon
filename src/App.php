@@ -41,6 +41,11 @@ class App
     private $events = [];
 
     /**
+     * @var string
+     */
+    private $routePrefix = '';
+
+    /**
      * App constructor.
      * @param array $setting
      */
@@ -148,10 +153,7 @@ class App
      */
     public function get($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('GET', $uri, [
-            'uses' => new Handler($this->container, $callback),
-            'middleware' => $middleware,
-        ]);
+        $this->addRoute('GET', $uri, $callback, $middleware);
     }
 
     /**
@@ -162,10 +164,7 @@ class App
      */
     public function post($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('POST', $uri, [
-            'uses' => new Handler($this->container, $callback),
-            'middleware' => $middleware,
-        ]);
+        $this->addRoute('POST', $uri, $callback, $middleware);
     }
 
     /**
@@ -176,10 +175,7 @@ class App
      */
     public function put($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('PUT', $uri, [
-            'uses' => new Handler($this->container, $callback),
-            'middleware' => $middleware,
-        ]);
+        $this->addRoute('PUT', $uri, $callback, $middleware);
     }
 
     /**
@@ -190,10 +186,7 @@ class App
      */
     public function delete($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('DELETE', $uri, [
-            'uses' => new Handler($this->container, $callback),
-            'middleware' => $middleware,
-        ]);
+        $this->addRoute('DELETE', $uri, $callback, $middleware);
     }
 
     /**
@@ -204,10 +197,7 @@ class App
      */
     public function patch($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('PATCH', $uri, [
-            'uses' => new Handler($this->container, $callback),
-            'middleware' => $middleware,
-        ]);
+        $this->addRoute('PATCH', $uri, $callback, $middleware);
     }
 
     /**
@@ -218,10 +208,7 @@ class App
      */
     public function head($uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute('HEAD', $uri, [
-            'uses' => new Handler($this->container, $callback),
-            'middleware' => $middleware,
-        ]);
+        $this->addRoute('HEAD', $uri, $callback, $middleware);
     }
 
     /**
@@ -233,7 +220,7 @@ class App
      */
     public function addRoute($method, $uri, $callback, $middleware = null)
     {
-        $this->container['router.collector']->addRoute($method, $uri, [
+        $this->container['router.collector']->addRoute($method, $this->routePrefix.$uri, [
             'uses' => new Handler($this->container, $callback),
             'middleware' => $middleware,
         ]);
@@ -245,7 +232,10 @@ class App
      */
     public function group($prefix, $callback)
     {
-        $this->container['router.collector']->addGroup($prefix, $callback);
+        $originPrefix = $this->routePrefix;
+        $this->routePrefix = $prefix;
+        $callback($this);
+        $this->routePrefix = $originPrefix;
     }
 
     /**
