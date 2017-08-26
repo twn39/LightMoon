@@ -95,6 +95,7 @@ class App
             $middleware = $routeInfo[1]['middleware'];
 
             $psr7Request = Request::fromSwoole($request);
+            $psr7Request = $psr7Request->withAttributes($routeInfo[2]);
             $psr7Response = new Response();
 
             if ($handler instanceof Handler) {

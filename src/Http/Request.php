@@ -155,7 +155,7 @@ class Request extends \GuzzleHttp\Psr7\Request
         } else {
             $body = '';
         }
-        $protocol = '1.1';
+        list($scheme, $protocol) = explode('/', $request->server['server_protocol']);
 
         $serverRequest = new static($method, $uri, $headers, $body, $protocol);
 
@@ -258,6 +258,40 @@ class Request extends \GuzzleHttp\Psr7\Request
     }
 
     /**
+     * @param $key
+     * @param null $default
+     * @return mixed
+     */
+    public function getParam($key, $default = null)
+    {
+        if (false === array_key_exists($key, $this->parsedBody)) {
+            return $default;
+        }
+        return $this->parsedBody[$key];
+    }
+
+    /**
+     * @return array|null|object
+     */
+    public function getParams()
+    {
+        return $this->parsedBody;
+    }
+
+    /**
+     * @param $key
+     * @param null $default
+     * @return mixed|null
+     */
+    public function getQueryParam($key, $default = null)
+    {
+        if (false === array_key_exists($key, $this->queryParams)) {
+            return $default;
+        }
+        return $this->queryParams[$key];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getQueryParams()
@@ -322,6 +356,18 @@ class Request extends \GuzzleHttp\Psr7\Request
     {
         $new = clone $this;
         $new->attributes[$attribute] = $value;
+
+        return $new;
+    }
+
+    /**
+     * @param array $attributes
+     * @return Request
+     */
+    public function withAttributes(array $attributes)
+    {
+        $new  = clone $this;
+        $new->attributes = $attributes;
 
         return $new;
     }
