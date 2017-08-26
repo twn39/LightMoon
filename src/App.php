@@ -132,12 +132,11 @@ class App
         $response->write($psr7Response->getBody()->getContents());
 
         foreach ($psr7Response->getHeaders() as $key => $header) {
-            $response->header($key, $header);
+            $response->header($key, implode(',', $header));
         }
 
         $response->status($psr7Response->getStatusCode());
         // todo cookie
-
 
         return $response;
     }
