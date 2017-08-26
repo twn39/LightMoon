@@ -2,6 +2,8 @@
 
 namespace LightMoon;
 
+use LightMoon\Http\Request;
+use LightMoon\Http\Response;
 use Pimple\Container;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
@@ -92,17 +94,18 @@ class App
             $handler = $routeInfo[1]['uses'];
             $middleware = $routeInfo[1]['middleware'];
 
+            $psr7Request = Request::fromSwoole($request);
+            $psr7Response = new Response();
+
             if ($handler instanceof Handler) {
                 if (is_callable($middleware)) {
-                    $response = call_user_func_array($middleware, [$request, $response, $handler]);
-                    $response->end();
-                    return $response;
+                    $psr7Response = call_user_func_array($middleware, [$psr7Request, $psr7Response, $handler]);
                 } else {
-
-                    $response = call_user_func_array($handler, [$request, $response]);
-                    $response->end();
-                    return $response;
+                    $psr7Response = call_user_func_array($handler, [$psr7Request, $psr7Response]);
                 }
+                $psr7Response->getBody()->rewind();
+                $response->end($psr7Response->getBody()->getContents());
+                return $response;
             } else {
                 throw new InvalidArgumentException('handler is invalid');
             }

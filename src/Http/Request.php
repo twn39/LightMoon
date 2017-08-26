@@ -2,15 +2,15 @@
 
 namespace LightMoon\Http;
 
-use function GuzzleHttp\Psr7\stream_for;
 use GuzzleHttp\Psr7\UploadedFile;
+use GuzzleHttp\Psr7\Uri;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
- * Server-side HTTP request
+ * HTTP request
  *
  * Extends the Request definition to add methods for accessing incoming data,
  * specifically server parameters, cookies, matched path parameters, query
@@ -149,63 +149,74 @@ class Request extends \GuzzleHttp\Psr7\Request
     {
         $method = $request->server['request_method'];
         $headers = $request->header;
-        $uri = $request->server['request_uri'];
-        $body = stream_for($request->rawContent());
+        $uri = self::getUriFromSwoole($request);
+        if($request->rawContent()) {
+            $body = $request->rawContent();
+        } else {
+            $body = '';
+        }
         $protocol = '1.1';
 
         $serverRequest = new static($method, $uri, $headers, $body, $protocol);
 
+        $cookie = isset($request->cookie)
+            ? $request->cookie
+            : [];
+
+        $get = isset($request->get)
+            ? $request->get
+            : [];
+
+        $post = isset($request->post)
+            ? $request->post
+            : [];
+
+        $files = isset($request->files)
+            ? $request->files
+            : [];
+
         return $serverRequest
-            ->withCookieParams($request->cookie)
-            ->withQueryParams($request->get)
-            ->withParsedBody($request->post)
-            ->withUploadedFiles(self::normalizeFiles($request->files));
+            ->withCookieParams($cookie)
+            ->withQueryParams($get)
+            ->withParsedBody($post)
+            ->withUploadedFiles(self::normalizeFiles($files));
     }
 
     /**
      * Get a Uri populated with values from $_SERVER.
      *
+     * @param $request
      * @return UriInterface
      */
-    public static function getUriFromGlobals()
+    public static function getUriFromSwoole($request)
     {
-//        $uri = new Uri('');
-//
-//        $uri = $uri->withScheme(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
-//
-//        $hasPort = false;
-//        if (isset($_SERVER['HTTP_HOST'])) {
-//            $hostHeaderParts = explode(':', $_SERVER['HTTP_HOST']);
-//            $uri = $uri->withHost($hostHeaderParts[0]);
-//            if (isset($hostHeaderParts[1])) {
-//                $hasPort = true;
-//                $uri = $uri->withPort($hostHeaderParts[1]);
-//            }
-//        } elseif (isset($_SERVER['SERVER_NAME'])) {
-//            $uri = $uri->withHost($_SERVER['SERVER_NAME']);
-//        } elseif (isset($_SERVER['SERVER_ADDR'])) {
-//            $uri = $uri->withHost($_SERVER['SERVER_ADDR']);
-//        }
-//
-//        if (!$hasPort && isset($_SERVER['SERVER_PORT'])) {
-//            $uri = $uri->withPort($_SERVER['SERVER_PORT']);
-//        }
-//
-//        $hasQuery = false;
-//        if (isset($_SERVER['REQUEST_URI'])) {
-//            $requestUriParts = explode('?', $_SERVER['REQUEST_URI']);
-//            $uri = $uri->withPath($requestUriParts[0]);
-//            if (isset($requestUriParts[1])) {
-//                $hasQuery = true;
-//                $uri = $uri->withQuery($requestUriParts[1]);
-//            }
-//        }
-//
-//        if (!$hasQuery && isset($_SERVER['QUERY_STRING'])) {
-//            $uri = $uri->withQuery($_SERVER['QUERY_STRING']);
-//        }
-//
-//        return $uri;
+
+        $uri = new Uri('');
+        list($scheme, $protocol) = explode('/', $request->server['server_protocol']);
+
+        $uri = $uri->withScheme($scheme);
+
+        $hasPort = false;
+        if (isset($request->header['host'])) {
+            $hostHeaderParts = explode(':', $request->header['host']);
+            $uri = $uri->withHost($hostHeaderParts[0]);
+            if (isset($hostHeaderParts[1])) {
+                $hasPort = true;
+                $uri = $uri->withPort($hostHeaderParts[1]);
+            }
+        }
+
+        if (!$hasPort && isset($request->server['server_port'])) {
+            $uri = $uri->withPort($request->server['server_port']);
+        }
+
+        $uri = $uri->withPath($request->server['request_uri']);
+        $queryString = isset($request->server['query_string'])
+            ? $request->server['query_string']
+            : '';
+        $uri = $uri->withQuery($queryString);
+
+        return $uri;
     }
 
     /**
