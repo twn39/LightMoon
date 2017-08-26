@@ -150,7 +150,7 @@ class Request extends \GuzzleHttp\Psr7\Request
         $method = $request->server['request_method'];
         $headers = $request->header;
         $uri = self::getUriFromSwoole($request);
-        if($request->rawContent()) {
+        if ($request->rawContent()) {
             $body = $request->rawContent();
         } else {
             $body = '';
@@ -190,7 +190,6 @@ class Request extends \GuzzleHttp\Psr7\Request
      */
     public static function getUriFromSwoole($request)
     {
-
         $uri = new Uri('');
         list($scheme, $protocol) = explode('/', $request->server['server_protocol']);
 

@@ -10,6 +10,7 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
 use FastRoute\Dispatcher\GroupCountBased;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 
 class App
 {
@@ -90,7 +91,6 @@ class App
         $routeInfo = $this->container['router.dispatch']->dispatch($httpMethod, $uri);
 
         if ($routeInfo[0] === Dispatcher::FOUND) {
-
             $handler = $routeInfo[1]['uses'];
             $middleware = $routeInfo[1]['middleware'];
 
@@ -104,13 +104,12 @@ class App
                 } else {
                     $psr7Response = call_user_func_array($handler, [$psr7Request, $psr7Response]);
                 }
-                $psr7Response->getBody()->rewind();
-                $response->end($psr7Response->getBody()->getContents());
+                $response = $this->parsePsr7Response($psr7Response, $response);
+                $response->end();
                 return $response;
             } else {
                 throw new InvalidArgumentException('handler is invalid');
             }
-
         } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
             $response->status(405);
             $request->end('Method Not Allowed');
@@ -120,6 +119,27 @@ class App
             $response->end('Not Found');
             return $response;
         }
+    }
+
+    /**
+     * @param ResponseInterface $psr7Response
+     * @param $response
+     * @return mixed
+     */
+    private function parsePsr7Response(ResponseInterface $psr7Response, $response)
+    {
+        $psr7Response->getBody()->rewind();
+        $response->write($psr7Response->getBody()->getContents());
+
+        foreach ($psr7Response->getHeaders() as $key => $header) {
+            $response->header($key, $header);
+        }
+
+        $response->status($psr7Response->getStatusCode());
+        // todo cookie
+
+
+        return $response;
     }
 
     /**
