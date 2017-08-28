@@ -2,3 +2,6 @@
 .idea
 composer.lock
 .php_cs.cache
+yarn.lock
+node_modules
+server.pid

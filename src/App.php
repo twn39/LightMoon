@@ -80,7 +80,7 @@ class App
      */
     public function onStart(\swoole_http_server $server)
     {
-        echo "Server start at {$server->host}:{$server->port}....";
+        echo "Server start at {$server->host}:{$server->port}....\n";
     }
 
     /**
