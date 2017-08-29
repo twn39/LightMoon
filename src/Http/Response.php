@@ -82,6 +82,10 @@ class Response implements ResponseInterface
     private $statusCode = 200;
 
     /**
+     * @var array
+     */
+    private $cookies;
+    /**
      * @param int                                  $status  Status code
      * @param array                                $headers Response headers
      * @param string|null|resource|StreamInterface $body    Response body
@@ -129,6 +133,51 @@ class Response implements ResponseInterface
             $reasonPhrase = self::$phrases[$new->statusCode];
         }
         $new->reasonPhrase = $reasonPhrase;
+        return $new;
+    }
+
+    /**
+     * @param $key
+     * @param string $value
+     * @param int $expire
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param bool $httponly
+     * @return Response
+     */
+    public function setCookie(
+        $key, $value = '', $expire = 0, $path = '/',
+        $domain = '', $secure = false, $httponly = false)
+    {
+        $new = clone $this;
+        $new->cookies[] = [
+            'key'      => $key,
+            'value'    => $value,
+            'expire'   => $expire,
+            'path'     => $path,
+            'domain'   => $domain,
+            'secure'   => $secure,
+            'httponly' => $httponly,
+        ];
+
+        return $new;
+    }
+
+    public function getCookies()
+    {
+        return $this->cookies;
+    }
+
+    /**
+     * @param $content
+     * @return MessageTrait|Response
+     */
+    public function withJSON($content)
+    {
+        $new = $this->withHeader('Content-Type', 'application/json;charset=utf-8');
+        $new->getBody()->write($content);
+
         return $new;
     }
 }

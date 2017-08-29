@@ -2,15 +2,15 @@
 
 namespace LightMoon;
 
-use LightMoon\Http\Request;
-use LightMoon\Http\Response;
 use Pimple\Container;
 use FastRoute\Dispatcher;
+use LightMoon\Http\Request;
+use LightMoon\Http\Response;
 use FastRoute\RouteCollector;
-use FastRoute\RouteParser\Std;
-use FastRoute\Dispatcher\GroupCountBased;
 use InvalidArgumentException;
+use FastRoute\RouteParser\Std;
 use Psr\Http\Message\ResponseInterface;
+use FastRoute\Dispatcher\GroupCountBased;
 
 class App
 {
@@ -138,6 +138,11 @@ class App
 
         foreach ($psr7Response->getHeaders() as $key => $header) {
             $response->header($key, implode(',', $header));
+        }
+
+        foreach ($psr7Response->getCookies() as $cookie) {
+            $response->cookie($cookie['key'], $cookie['value'], $cookie['expire'],
+                $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly']);
         }
 
         $response->status($psr7Response->getStatusCode());
