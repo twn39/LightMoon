@@ -111,18 +111,15 @@ class App
                 }
                 $response = $this->parsePsr7Response($psr7Response, $response);
                 $response->end();
-                return $response;
             } else {
                 throw new InvalidArgumentException('handler is invalid');
             }
         } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
             $response->status(405);
             $request->end('Method Not Allowed');
-            return $response;
         } elseif ($routeInfo[0] === Dispatcher::NOT_FOUND) {
             $response->status(404);
             $response->end('Not Found');
-            return $response;
         }
     }
 
@@ -131,11 +128,10 @@ class App
      * @param $response
      * @return mixed
      */
-    private function parsePsr7Response(ResponseInterface $psr7Response, $response)
+    private function parsePsr7Response(ResponseInterface $psr7Response, &$response)
     {
-        $psr7Response->getBody()->rewind();
-        $response->write($psr7Response->getBody()->getContents());
-
+        // set header and cookie before write content,
+        // or header and cookie will be empty
         foreach ($psr7Response->getHeaders() as $key => $header) {
             $response->header($key, implode(',', $header));
         }
@@ -146,7 +142,9 @@ class App
         }
 
         $response->status($psr7Response->getStatusCode());
-        // todo cookie
+
+        $psr7Response->getBody()->rewind();
+        $response->write($psr7Response->getBody()->getContents());
 
         return $response;
     }
