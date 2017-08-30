@@ -1,4 +1,16 @@
 {
+    "name": "lightmoon/lightmoon",
+    "description": "A web framework build on swoole framework.",
+    "keywords": ["microframework", "rest", "router", "psr7", "swoole"],
+    "homepage": "https://github.com/twn39/LightMoon",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Weinan Tang",
+            "email": "twn39@163.com",
+            "homepage": "http://www.libre.me"
+        }
+    ],
     "require": {
         "pimple/pimple": "^3.2",
         "nikic/fast-route": "^1.2",
