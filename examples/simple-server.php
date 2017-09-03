@@ -14,7 +14,9 @@ $app = new LightMoon\App([
 
 $app->get('/', function (RequestInterface $request, ResponseInterface $response) {
 
-    return $response->getBody()->write("hello world!");
+    $response->getBody()->write("hello world!");
+
+    return $response;
 });
 
 $app->run();

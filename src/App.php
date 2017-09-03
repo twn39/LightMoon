@@ -136,9 +136,13 @@ class App
             $response->header($key, implode(',', $header));
         }
 
-        foreach ($psr7Response->getCookies() as $cookie) {
-            $response->cookie($cookie['key'], $cookie['value'], $cookie['expire'],
-                $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly']);
+        $cookies = $psr7Response->getCookies();
+
+        if (!empty($cookie)) {
+            foreach ($cookies as $cookie) {
+                $response->cookie($cookie['key'], $cookie['value'], $cookie['expire'],
+                    $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly']);
+            }
         }
 
         $response->status($psr7Response->getStatusCode());
