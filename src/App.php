@@ -128,7 +128,7 @@ class App
      * @param $response
      * @return mixed
      */
-    private function parsePsr7Response(ResponseInterface $psr7Response, &$response)
+    private function parsePsr7Response(ResponseInterface $psr7Response, $response)
     {
         // set header and cookie before write content,
         // or header and cookie will be empty
