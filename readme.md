@@ -98,19 +98,6 @@ $app->run();
 ```php
 <?php
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
-require 'vendor/autoload.php';
-
-$app = new LightMoon\App([
-    'host' => '127.0.0.1',
-    'listen' => '8080',
-    'server' => [
-        'worker_num' => 4,
-    ]
-]);
-
 $app->get('/', function (RequestInterface $request, ResponseInterface $response) {
 
     $response->getBody()->write("hello world!");
@@ -123,26 +110,12 @@ $app->get('/', function (RequestInterface $request, ResponseInterface $response)
     return $response;
 });
 
-$app->run();
 ```
 
 **swoole event**
 
 ```php
 <?php
-
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
-require 'vendor/autoload.php';
-
-$app = new LightMoon\App([
-    'host' => '127.0.0.1',
-    'listen' => '8080',
-    'server' => [
-        'worker_num' => 4,
-    ]
-]);
 
 $app->on('workerstart', function () {
     echo "worker started\n";
@@ -158,5 +131,48 @@ $app->get('/', function (RequestInterface $request, ResponseInterface $response)
     return $response;
 });
 
-$app->run();
+```
+
+**路由**
+
+
+路由支持: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `HEAD`,
+
+```php
+$app->get('/', 'HomeController:index')
+```
+
+**路由组**
+
+```php
+$app->group('/users', function (\LightMoon\App $app) {
+   $app->get('/{id}', UserController::class.':show',
+       function (\LightMoon\Http\Request $request, \LightMoon\Http\Response $response, $next) {
+            $response = $next($request, $response);
+            return $response;
+       });
+});
+```
+
+**注册组件**
+
+创建组建：
+
+```php
+use Pimple\Container;
+
+class FooProvider implements Pimple\ServiceProviderInterface
+{
+    public function register(Container $pimple)
+    {
+        // register some services and parameters
+        // on $pimple
+    }
+}
+```
+
+注册：
+
+```php
+$app->register(new FooProvider());
 ```
