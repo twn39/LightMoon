@@ -3,7 +3,7 @@
 use LightMoon\Application;
 use Zend\Config\Config;
 
-require "vendor/autoload.php";
+require __DIR__.'/../vendor/autoload.php';
 
 $config = [
     'server' => [

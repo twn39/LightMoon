@@ -124,6 +124,28 @@ class Application
      * @param $name
      * @param $path
      * @param $handler
+     * @param array $requirements
+     */
+    public function options($name, $path, $handler, $requirements = [])
+    {
+        $this->route($name, $path, $handler, $requirements, ['OPTIONS']);
+    }
+
+    /**
+     * @param $name
+     * @param $path
+     * @param $handler
+     * @param array $requirements
+     */
+    public function patch($name, $path, $handler, $requirements = [])
+    {
+        $this->route($name, $path, $handler, $requirements, ['PATCH']);
+    }
+
+    /**
+     * @param $name
+     * @param $path
+     * @param $handler
      * @param $requirements
      * @param $methods
      */
