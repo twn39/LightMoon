@@ -3,7 +3,7 @@ LightMoon是一个基于swoole的微型框架，灵感来自于Slimphp。
 
 ### 设计理念
 
-简单至上，越少的代码意味着越少的bug，此框架核心代码加上注释不足1000行，路由采用Symfony routing，依赖管理使用pimple。
+简单至上，越少的代码意味着越少的bug，此框架核心代码加上注释不足500行，路由采用Symfony routing，依赖管理使用pimple。
 不同的项目有不同的需求，有人会使用MVC全功能框架，例如Laravel来开发整个业务，也有人会使用Slimphp这种微型框架来开发api。
 通过pimple很容易将lightmoon扩展为全功能框架，也可以仅仅使用核心功能来开发api。
 
