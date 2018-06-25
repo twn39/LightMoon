@@ -20,7 +20,9 @@ class HttpServerProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $config = $container[Config::class]['server'];
-        $container[swoole_http_server::class] = new swoole_http_server($config['host'], $config['port']);
+        $container[swoole_http_server::class] = function ($c) {
+            $config = $c[Config::class]['server'];
+            return new swoole_http_server($config['host'], $config['port']);
+        };
     }
 }

@@ -18,6 +18,8 @@ class RouteProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $container[RouteCollection::class] = new RouteCollection();
+        $container[RouteCollection::class] = function () {
+            return new RouteCollection();
+        };
     }
 }

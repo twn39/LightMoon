@@ -18,6 +18,8 @@ class MiddlewareProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $container[PriorityMiddleware::class] = new PriorityMiddleware();
+        $container[PriorityMiddleware::class] = function () {
+            return new PriorityMiddleware();
+        };
     }
 }
