@@ -41,6 +41,10 @@ class HomeControllerProvider implements \Pimple\ServiceProviderInterface
 
 $app = new Application(new Config($config));
 $app->register(new HomeControllerProvider());
+$app->middleware(function ($request, $response) {
+    $response->header('Content-type', "Application/json;charset=utf-8");
+    return $response;
+}, $priority = 10);
 
 $app->get('home', '/', HomeController::class.'::site');
 

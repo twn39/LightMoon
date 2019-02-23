@@ -3,10 +3,10 @@
 namespace LightMoon;
 
 use Pimple\Container;
+use Zend\Config\Config;
 use Swoole\Http\Server;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Zend\Config\Config;
 use Pimple\ServiceProviderInterface;
 use Symfony\Component\Routing\Route;
 use LightMoon\Providers\RouteProvider;
