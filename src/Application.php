@@ -3,9 +3,9 @@
 namespace LightMoon;
 
 use Pimple\Container;
-use swoole_http_request;
-use swoole_http_response;
-use swoole_http_server;
+use Swoole\Http\Server;
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 use Zend\Config\Config;
 use Pimple\ServiceProviderInterface;
 use Symfony\Component\Routing\Route;
@@ -45,9 +45,9 @@ class Application
     }
 
     /**
-     * @param swoole_http_server $server
+     * @param Server $server
      */
-    public function onStart(swoole_http_server $server)
+    public function onStart(Server $server)
     {
         echo "Server start at {$server->host}:{$server->port}....\n";
     }
@@ -65,7 +65,7 @@ class Application
      * @param $request
      * @param $response
      */
-    public function onRequest(swoole_http_request $request, swoole_http_response $response)
+    public function onRequest(Request $request, Response $response)
     {
         $middlewares = clone $this->container[PriorityMiddleware::class];
 
@@ -176,7 +176,7 @@ class Application
 
     public function run()
     {
-        $http = $this->container[swoole_http_server::class];
+        $http = $this->container[Server::class];
 
         foreach ($this->events as $event => $callback) {
             $http->on($event, $callback);

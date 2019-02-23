@@ -7,8 +7,8 @@ require __DIR__.'/../vendor/autoload.php';
 
 $config = [
     'server' => [
-        'host' => 'localhost',
-        'port' => '9501',
+        'host' => '0.0.0.0',
+        'port' => '8060',
     ]
 ];
 

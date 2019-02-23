@@ -3,7 +3,7 @@
 namespace LightMoon\Providers;
 
 use Pimple\Container;
-use swoole_http_server;
+use Swoole\Http\Server;
 use Zend\Config\Config;
 use Pimple\ServiceProviderInterface;
 
@@ -20,9 +20,9 @@ class HttpServerProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $container[swoole_http_server::class] = function ($c) {
+        $container[Server::class] = function ($c) {
             $config = $c[Config::class]['server'];
-            return new swoole_http_server($config['host'], $config['port']);
+            return new Server($config['host'], $config['port']);
         };
     }
 }

@@ -2,14 +2,14 @@
 
 namespace LightMoon\Middleware;
 
-use Fig\Http\Message\StatusCodeInterface;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Fig\Http\Message\StatusCodeInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class RequestHandlerProvider implements ServiceProviderInterface
 {
