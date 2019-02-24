@@ -8,6 +8,7 @@
  * 首先确保所执行的函数体里面没有阻塞的函数，例如PDO，file_get_contents等等，
  * 如果有这些函数，请先执行： Swoole\Runtime::enableCoroutine();
  */
+namespace LightMoon\Coroutine;
 
 use Swoole\Coroutine as Co;
 
