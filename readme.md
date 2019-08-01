@@ -31,49 +31,57 @@ composer require lightmoon/lightmoon
 ```php
 <?php
 
-use LightMoon\Application;
+use Pimple\Container;
 use Zend\Config\Config;
+use LightMoon\Application;
+use Pimple\ServiceProviderInterface;
+use LightMoon\Middleware\JsonResponseMiddleware;
 
-require "vendor/autoload.php";
+require __DIR__.'/vendor/autoload.php';
 
 $config = [
     'server' => [
-        'host' => 'localhost',
-        'port' => '9501',
+        'host' => '0.0.0.0',
+        'port' => '8060',
+        'worker_num' => 2,
     ]
 ];
 
 class HomeController
 {
-    public function index($request, $response, $params)
+    public function site($request, $response)
     {
-        $response->write("hello swoole");
-
+        $response->write(json_encode([
+            'title' => 'hello swoole !',
+        ]));
         return $response;
     }
 
-    public function site($request, $response, $params)
-    {
+    public function api($request, $response, $attr) {
         $response->write(json_encode([
-            'hello' => 'world',
+            'version' => $attr['version'],
         ]));
+
         return $response;
     }
 }
 
-class HomeControllerProvider implements \Pimple\ServiceProviderInterface
+class HomeControllerProvider implements ServiceProviderInterface
 {
-
-    public function register(\Pimple\Container $pimple)
+    public function register(Container $container)
     {
-        $pimple[HomeController::class] = new HomeController();
+        $container[HomeController::class] = new HomeController();
     }
 }
 
 $app = new Application(new Config($config));
 $app->register(new HomeControllerProvider());
+$app->middleware(new JsonResponseMiddleware(), $priority = 10);
 
-$app->get('home', '/', HomeController::class.'::site');
+$app->get('home', '/', HomeController::class.'@site');
+$app->get('api', '/api/{version}', HomeController::class.'@api', [
+    'version' => 'v[1-9]+'
+]);
 
 $app->run();
 ```
@@ -111,7 +119,7 @@ $app->on('start', function () {
 路由支持: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `HEAD`,
 
 ```php
-$app->get('home', '/', 'HomeController::index')
+$app->get('home', '/', 'HomeController@index')
 ```
 
 **注册组件**
