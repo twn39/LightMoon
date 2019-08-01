@@ -47,7 +47,7 @@ $app->middleware(function ($request, $response) {
     return $response;
 }, $priority = 10);
 
-$app->get('home', '/', HomeController::class.'::site');
+$app->get('home', '/', HomeController::class.'@site');
 
 $app->run();
 

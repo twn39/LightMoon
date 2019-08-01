@@ -11,10 +11,10 @@ use Pimple\ServiceProviderInterface;
 use Symfony\Component\Routing\Route;
 use LightMoon\Providers\RouteProvider;
 use LightMoon\Providers\HttpServerProvider;
-use LightMoon\Middleware\MiddlewareProvider;
 use LightMoon\Middleware\PriorityMiddleware;
+use LightMoon\Providers\MiddlewareProvider;
+use LightMoon\Providers\RequestHandlerProvider;
 use Symfony\Component\Routing\RouteCollection;
-use LightMoon\Middleware\RequestHandlerProvider;
 
 class Application
 {
@@ -151,7 +151,7 @@ class Application
      */
     public function route($name, $path, $handler, $requirements, $methods)
     {
-        list($controller, $action) = explode('::', $handler);
+        list($controller, $action) = explode('@', $handler);
         $routes = $this->container[RouteCollection::class];
         $route = new Route($path, ['_controller' => $controller, '_action' => $action], $requirements, [], '', [], $methods);
         $routes->add($name, $route);

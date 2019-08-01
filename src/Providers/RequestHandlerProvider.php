@@ -1,12 +1,13 @@
 <?php
 
-namespace LightMoon\Middleware;
+namespace LightMoon\Providers;
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
+use LightMoon\Middleware\PriorityMiddleware;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;

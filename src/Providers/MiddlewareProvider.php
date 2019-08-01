@@ -1,9 +1,10 @@
 <?php
 
-namespace LightMoon\Middleware;
+namespace LightMoon\Providers;
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use LightMoon\Middleware\PriorityMiddleware;
 
 class MiddlewareProvider implements ServiceProviderInterface
 {
