@@ -1,7 +1,10 @@
 <?php
 
-use LightMoon\Application;
+use Pimple\Container;
 use Zend\Config\Config;
+use LightMoon\Application;
+use Pimple\ServiceProviderInterface;
+use LightMoon\Middleware\JsonResponseMiddleware;
 
 require __DIR__.'/../vendor/autoload.php';
 
@@ -15,39 +18,38 @@ $config = [
 
 class HomeController
 {
-    public function index($request, $response, $params)
-    {
-        $response->write("hello swoole");
-
-        return $response;
-    }
-
     public function site($request, $response, $params)
     {
         $response->write(json_encode([
-            'hello' => 'world',
+            'title' => 'hello swoole !',
         ]));
+        return $response;
+    }
+
+    public function api($request, $response, $attr) {
+        $response->write(json_encode([
+            'version' => $attr['version'],
+        ]));
+
         return $response;
     }
 }
 
-class HomeControllerProvider implements \Pimple\ServiceProviderInterface
+class HomeControllerProvider implements ServiceProviderInterface
 {
-
-    public function register(\Pimple\Container $pimple)
+    public function register(Container $container)
     {
-        $pimple[HomeController::class] = new HomeController();
+        $container[HomeController::class] = new HomeController();
     }
 }
 
 $app = new Application(new Config($config));
 $app->register(new HomeControllerProvider());
-$app->middleware(function ($request, $response) {
-    $response->header('Content-type', "Application/json;charset=utf-8");
-    return $response;
-}, $priority = 10);
+$app->middleware(new JsonResponseMiddleware(), $priority = 10);
 
 $app->get('home', '/', HomeController::class.'@site');
+$app->get('api', '/api/{version}', HomeController::class.'@api', [
+    'version' => 'v[1-9]+'
+]);
 
 $app->run();
-

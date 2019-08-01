@@ -15,6 +15,7 @@ use LightMoon\Middleware\PriorityMiddleware;
 use LightMoon\Providers\MiddlewareProvider;
 use LightMoon\Providers\RequestHandlerProvider;
 use Symfony\Component\Routing\RouteCollection;
+use LightMoon\Providers\EventDispatcherProvider;
 
 class Application
 {
@@ -40,6 +41,7 @@ class Application
         $this->container->register(new RouteProvider());
         $this->container->register(new MiddlewareProvider());
         $this->container->register(new RequestHandlerProvider());
+        $this->container->register(new EventDispatcherProvider());
         $this->events['request'] = [$this, 'onRequest'];
         $this->events['start'] = [$this, 'onStart'];
     }
@@ -172,6 +174,15 @@ class Application
     public function on($event, callable $callback)
     {
         $this->events[$event] = $callback;
+    }
+
+    /**
+     * @param RouteCollection $group
+     */
+    public function addRouteGroup(RouteCollection $group)
+    {
+        $rootRouter = $this->container[RouteCollection::class];
+        $rootRouter->addCollection($group);
     }
 
     public function run()

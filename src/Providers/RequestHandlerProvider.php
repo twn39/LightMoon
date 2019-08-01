@@ -32,8 +32,8 @@ class RequestHandlerProvider implements ServiceProviderInterface
                 'http',
                 $request->server['server_port'],
                 443,
-                '/',
-                ''
+                $request->server['path_info'],
+                $request->server['query_string'] ?? ''
             );
 
             $matcher = new UrlMatcher($container[RouteCollection::class], $context);
