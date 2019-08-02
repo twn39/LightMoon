@@ -144,3 +144,33 @@ class FooProvider implements Pimple\ServiceProviderInterface
 ```php
 $app->register(new FooProvider());
 ```
+
+添加数据库：
+
+LightMoon 提供了 Eloquent ORM 封装，默认并没有启用，如需启用，可添加配置：
+
+```php
+$config = [
+    'server' => [
+        'host' => '0.0.0.0',
+        'port' => '8060',
+        'worker_num' => 2,
+    ],
+    'DB' => [
+        'driver' => 'sqlite',
+        'database' => __DIR__ . '/DB.sqlite',
+        'prefix' => '',
+        'foreign_key_constraints' => true,
+        'pool' => [
+            'size' => 3,
+        ]
+    ],
+```
+
+注入数据库服务：
+
+```php 
+$app->register(new DatabaseProvider());
+```
+
+> 注：Eloquent ORM 使用的是 PDO 和 Mysqli， 所以需要开启：`Swoole\Runtime::enableCoroutine()`。
