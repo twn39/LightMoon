@@ -22,7 +22,7 @@
         "symfony/routing": "^4.1",
         "zendframework/zend-config": "^3.2",
         "fig/http-message-util": "^1.1",
-        "illuminate/database": "^5.8",
+        "illuminate/database": "^6.20",
         "symfony/event-dispatcher": "^4.3"
     },
     "require-dev": {
