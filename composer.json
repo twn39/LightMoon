@@ -18,7 +18,8 @@
     },
     "require": {
         "php": "^8.1",
-        "swoole": "*",
+        "ext-json": "*",
+        "ext-swoole": "*",
         "pimple/pimple": "^3.5",
         "symfony/routing": "^6.1",
         "laminas/laminas-config": "^3.8",
