@@ -8,7 +8,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class EventDispatcherProvider implements ServiceProviderInterface
 {
-
     /**
      * Registers services on the given container.
      *
