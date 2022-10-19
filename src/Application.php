@@ -2,8 +2,8 @@
 
 namespace LightMoon;
 
+use Laminas\Config\Config;
 use Pimple\Container;
-use Zend\Config\Config;
 use Swoole\Http\Server;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -22,7 +22,7 @@ class Application
     /**
      * @var Container
      */
-    private $container;
+    private Container $container;
 
     /**
      * @var array
@@ -49,25 +49,25 @@ class Application
     /**
      * @param Server $server
      */
-    public function onStart(Server $server)
+    public function onStart(Server $server): void
     {
         echo "Server start at {$server->host}:{$server->port}....\n";
     }
 
     /**
-     * @param $callback
-     * @param $priority
+     * @param callable $callback
+     * @param int $priority
      */
-    public function middleware(callable $callback, int $priority)
+    public function middleware(callable $callback, int $priority): void
     {
         $this->container[PriorityMiddleware::class]->insert($callback, $priority);
     }
 
     /**
-     * @param $request
-     * @param $response
+     * @param Request $request
+     * @param Response $response
      */
-    public function onRequest(Request $request, Response $response)
+    public function onRequest(Request $request, Response $response): void
     {
         $middlewares = clone $this->container[PriorityMiddleware::class];
 
@@ -84,7 +84,7 @@ class Application
      * @param $handler
      * @param array $requirements
      */
-    public function get($name, $path, $handler, $requirements = [])
+    public function get($name, $path, $handler, array $requirements = []): void
     {
         $this->route($name, $path, $handler, $requirements, ['GET']);
     }
@@ -95,7 +95,7 @@ class Application
      * @param $handler
      * @param array $requirements
      */
-    public function put($name, $path, $handler, $requirements = [])
+    public function put($name, $path, $handler, array $requirements = []): void
     {
         $this->route($name, $path, $handler, $requirements, ['PUT']);
     }
@@ -106,7 +106,7 @@ class Application
      * @param $handler
      * @param array $requirements
      */
-    public function delete($name, $path, $handler, $requirements = [])
+    public function delete($name, $path, $handler, array $requirements = []): void
     {
         $this->route($name, $path, $handler, $requirements, ['DELETE']);
     }
@@ -117,7 +117,7 @@ class Application
      * @param $handler
      * @param array $requirements
      */
-    public function post($name, $path, $handler, $requirements = [])
+    public function post($name, $path, $handler, array $requirements = []): void
     {
         $this->route($name, $path, $handler, $requirements, ['POST']);
     }
@@ -128,7 +128,7 @@ class Application
      * @param $handler
      * @param array $requirements
      */
-    public function options($name, $path, $handler, $requirements = [])
+    public function options($name, $path, $handler, array $requirements = []): void
     {
         $this->route($name, $path, $handler, $requirements, ['OPTIONS']);
     }
@@ -139,7 +139,7 @@ class Application
      * @param $handler
      * @param array $requirements
      */
-    public function patch($name, $path, $handler, $requirements = [])
+    public function patch($name, $path, $handler, array $requirements = []): void
     {
         $this->route($name, $path, $handler, $requirements, ['PATCH']);
     }
@@ -151,7 +151,7 @@ class Application
      * @param $requirements
      * @param $methods
      */
-    public function route($name, $path, $handler, $requirements, $methods)
+    public function route($name, $path, $handler, $requirements, $methods): void
     {
         list($controller, $action) = explode('@', $handler);
         $routes = $this->container[RouteCollection::class];
@@ -160,9 +160,9 @@ class Application
     }
 
     /**
-     * @param $provider
+     * @param ServiceProviderInterface $provider
      */
-    public function register(ServiceProviderInterface $provider)
+    public function register(ServiceProviderInterface $provider): void
     {
         $this->container->register($provider);
     }
@@ -171,7 +171,7 @@ class Application
      * @param $event
      * @param callable $callback
      */
-    public function on($event, callable $callback)
+    public function on($event, callable $callback): void
     {
         $this->events[$event] = $callback;
     }
@@ -179,13 +179,13 @@ class Application
     /**
      * @param RouteCollection $group
      */
-    public function addRouteGroup(RouteCollection $group)
+    public function addRouteGroup(RouteCollection $group): void
     {
         $rootRouter = $this->container[RouteCollection::class];
         $rootRouter->addCollection($group);
     }
 
-    public function run()
+    public function run(): void
     {
         $http = $this->container[Server::class];
 

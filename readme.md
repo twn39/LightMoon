@@ -1,20 +1,20 @@
 
-LightMoon是一个基于swoole的微型框架，灵感来自于Slimphp。
+LightMoon是一个基于 Swoole 的微型框架，灵感来自于 Slimphp。
 
 ### 设计理念
 
-简单至上，越少的代码意味着越少的bug，此框架核心代码加上注释不足500行，路由采用Symfony routing，依赖管理使用pimple。
-不同的项目有不同的需求，有人会使用MVC全功能框架，例如Laravel来开发整个业务，也有人会使用Slimphp这种微型框架来开发api。
-通过pimple很容易将lightmoon扩展为全功能框架，也可以仅仅使用核心功能来开发api。
+简单至上，越少的代码意味着越少的 bug，此框架核心代码加上注释不足500行，路由采用 Symfony routing，依赖管理使用 pimple。
+不同的项目有不同的需求，有人会使用 MVC 全功能框架，例如 Laravel 来开发整个业务，也有人会使用 Slimphp 这种微型框架来开发 api。
+通过pimple很容易将 lightmoon 扩展为全功能框架，也可以仅仅使用核心功能来开发api。
 
 ### 优势
 
-LightMoon基于Swoole，因此在性能方面有很大的优势，API借鉴于Slimphp，熟悉Slimphp的用户能够很快上手，
-灵活容易定制，甚至可以fork本项目修改核心代码来满足业务需求，在能够极大地提升性能的同时，可以利用php完整，成熟的生态。
+LightMoon 基于 Swoole，因此在性能方面有很大的优势，API借鉴于 Slimphp，熟悉 Slimphp 的用户能够很快上手，
+灵活容易定制，甚至可以 fork 本项目修改核心代码来满足业务需求，在能够极大地提升性能的同时，可以利用 php 完整，成熟的生态。
 
 ### 缺点
 
-Lightoon是基于swoole，因此需要对swoole有基本的了解。
+LightMoon 是基于 swoole，因此需要对 Swoole 有基本的了解。
 
 ### 教程
 

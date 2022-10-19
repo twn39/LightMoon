@@ -5,8 +5,8 @@
 
 namespace LightMoon\Providers;
 
+use Laminas\Config\Config;
 use Pimple\Container;
-use Zend\Config\Config;
 use LightMoon\Coroutine\DBPool;
 use Pimple\ServiceProviderInterface;
 use Illuminate\Database\Connectors\ConnectionFactory;

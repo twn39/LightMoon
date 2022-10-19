@@ -3,6 +3,8 @@
 namespace LightMoon\Providers;
 
 use Pimple\Container;
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 use Pimple\ServiceProviderInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -24,7 +26,7 @@ class RequestHandlerProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $middleware = function ($request, $response) use ($container) {
+        $middleware = function (Request $request, Response $response) use ($container) {
             $context = new RequestContext(
                 '/',
                 $request->server['request_method'],
@@ -44,9 +46,11 @@ class RequestHandlerProvider implements ServiceProviderInterface
                 $response = $controller->$action($request, $response, $params);
             } catch (ResourceNotFoundException $exception) {
                 $response->status(StatusCodeInterface::STATUS_NOT_FOUND);
+                $response->header('Content-Type', "text/plain");
                 $response->write('Resource not found');
             } catch (MethodNotAllowedException $exception) {
                 $response->status(StatusCodeInterface::STATUS_METHOD_NOT_ALLOWED);
+                $response->header('Content-Type', "text/plain");
                 $response->write('Method not allowed');
             }
 

@@ -1,7 +1,7 @@
 <?php
 
+use Laminas\Config\Config;
 use Pimple\Container;
-use Zend\Config\Config;
 use LightMoon\Application;
 use Pimple\ServiceProviderInterface;
 use LightMoon\Middleware\JsonResponseMiddleware;

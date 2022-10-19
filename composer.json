@@ -17,15 +17,16 @@
         }
     },
     "require": {
-        "PHP": "^7.1",
-        "pimple/pimple": "^3.2",
-        "symfony/routing": "^4.1",
-        "zendframework/zend-config": "^3.2",
+        "php": "^8.1",
+        "swoole": "*",
+        "pimple/pimple": "^3.5",
+        "symfony/routing": "^6.1",
+        "laminas/laminas-config": "^3.8",
         "fig/http-message-util": "^1.1",
-        "illuminate/database": "^5.8",
-        "symfony/event-dispatcher": "^4.3"
+        "illuminate/database": "^9.36",
+        "symfony/event-dispatcher": "^6.1"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.5"
+        "friendsofphp/php-cs-fixer": "^3.12"
     }
 }

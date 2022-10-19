@@ -2,9 +2,9 @@
 
 namespace LightMoon\Providers;
 
+use Laminas\Config\Config;
 use Pimple\Container;
 use Swoole\Http\Server;
-use Zend\Config\Config;
 use Pimple\ServiceProviderInterface;
 
 class HttpServerProvider implements ServiceProviderInterface
