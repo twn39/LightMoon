@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a1da2868ebf2085253169e14c75b374",
+    "content-hash": "0117fda8d02ab175b1eedc62365f0913",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -155,7 +155,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v9.36.2",
+            "version": "v9.36.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -210,7 +210,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v9.36.2",
+            "version": "v9.36.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -256,7 +256,7 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v9.36.2",
+            "version": "v9.36.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -307,7 +307,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v9.36.2",
+            "version": "v9.36.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -355,16 +355,16 @@
         },
         {
             "name": "illuminate/database",
-            "version": "v9.36.2",
+            "version": "v9.36.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "3f09fd2eb7efe45c485754321174c4764338545d"
+                "reference": "dcad4f998891784b23e229bcb42bf0c0ea4cd52e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/3f09fd2eb7efe45c485754321174c4764338545d",
-                "reference": "3f09fd2eb7efe45c485754321174c4764338545d",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/dcad4f998891784b23e229bcb42bf0c0ea4cd52e",
+                "reference": "dcad4f998891784b23e229bcb42bf0c0ea4cd52e",
                 "shasum": ""
             },
             "require": {
@@ -419,11 +419,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-10-18T13:26:00+00:00"
+            "time": "2022-10-19T08:59:33+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v9.36.2",
+            "version": "v9.36.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -469,7 +469,7 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v9.36.2",
+            "version": "v9.36.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
@@ -3239,7 +3239,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "ext-json": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
